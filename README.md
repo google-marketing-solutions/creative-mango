@@ -10,9 +10,6 @@ download creatives and update to your App campaigns.
 **NOTE**: Google Ads API version: v12 (Upgraded: 22/11/29)
 **NOTE**: If your Google Ads API version < v12, please pull the latest changes from main branch and update dependencies(pip3 install -r requirements.txt) as well.
 
-## Solution document
-
-[Ask your Google support to grant you the access to the solution](https://docs.google.com/document/d/17fGE8KF2ykUL00gzaDMrMiPGI4xQjVYsvnR8l_ZAGBI)
 
 ## Prerequisites
 
@@ -34,7 +31,7 @@ directory. If not, check out the code to a local directory.
     *   Search 'Google Sheets API' and Enable it.
     *   Search 'YouTube Data API v3' and Enable it.
 
-2.  Make a copy of [Template sheet](https://docs.google.com/spreadsheets/d/15gsDyrWbCU7qFLaMCwadB-rcgU5F7uXnMl89dyXIk6w/copy)
+2.  Make a copy of [Template sheet](https://docs.google.com/spreadsheets/d/1L-rC9kunww4Z8UVE_3pmDhbmJcuQkukFcYjQPSzByr8/copy)
 
 3.  Set up your credentials through [step 3a. OAuth Client ID credentials (Recommended)] or [step 3b. Service Account].
 
