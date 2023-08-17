@@ -84,7 +84,6 @@ directory. If not, check out the code to a local directory.
         *   Find client_secret in 'client_secret' from step 3a or '_SECRETS_JSON' from step 3b.
     *   [refresh_token]
         *   For step 3a. OAuth2 Client ID credentials, Copy the refresh token generated in step 3a. which is stored in token.json
-        *   For step 3b. Service Account generate refresh_token by using the cloud account email. (https://developers.google.com/google-ads/api/docs/client-libs/python/oauth-desktop#step_3_-_generating_a_refresh_token)
     *   [Optional] login_customer_id, only if you setup under [manager account](https://support.google.com/google-ads/answer/6139186)
 
 5.  Update configuration in the config/setup.yaml
