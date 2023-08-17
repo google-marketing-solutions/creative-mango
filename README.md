@@ -1,4 +1,4 @@
-# Creative automation using Google Ads API
+# App Campaign Creative Automation Solution 
 
 Creative automation serves as a feed-centric creative management solution tailored for ACi and ACe.
 It comes equipped with automated capabilities for seamlessly uploading videos to YouTube.<br/>
