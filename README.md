@@ -7,7 +7,7 @@ With this tool, clients can conveniently manage their desired actions within a s
 The tool then takes charge, handling the process of pulling creatives and subsequently refreshing your App campaigns with the latest updates.<br/>
 <br/>
 
-The overall solution architect is as shown below.
+The overall solution architect is as follows.
 ![solution architect](https://github.com/google-marketing-solutions/creative-mango/assets/66818527/57647a9b-d781-4418-b7c1-c10b784c0c16)
 
 
@@ -74,25 +74,6 @@ directory. If not, check out the code to a local directory.
         - Login with the cloud account email and grant the app the required permissions.
         - An access/refresh token is generated for future authentication of the app and stored in the token.json file in the same folder.
         - Don't move 'token.json' as it will be used everytime the app is running.
-
-    3b. Authentication using a Service Account (This flow will be deprecated in Oct, 2022.)
-    *   Open [Cloud credentials](https://console.developers.google.com/apis/credentials)
-    *   Create credentials -> Create 'OAuth client ID' -> Desktop App
-    *   Download the json and savie the json as “_SECRETS_JSON” after creating
-    *   Create credentials -> Create 'Service account'
-        *   Go to the [Service Accounts page](https://console.cloud.google.com/iam-admin/serviceaccounts)
-        *   Select the project
-        *   Click the email address of the service account that you want to
-            create a key for
-        *   Click the Add key drop-down menu, then select Create new key
-        *   Select JSON as the Key type and click Create
-        *   Download the json and save the json as '_SERVICE_JSON' after
-            creating
-    *   Open '_SERVICE_JSON' and copy the email address.
-    *   Grant the email address to `Viewer` access to all `Google Drives`
-    *   Grant the email address to `Editor` access to the `Sheet` you just copied.
-    * Grant cloud account email with [standard access](https://support.google.com/google-ads/answer/6372672?hl=en) your AdWords account
-        *   Cloud account email is any 'Owner' role email in [cloud project](https://console.developers.google.com/iam-admin)
 
 4.  In google-ads.yaml file update following fields:
 
