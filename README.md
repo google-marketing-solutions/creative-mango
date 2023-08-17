@@ -1,14 +1,19 @@
 # Creative automation using Google Ads API
 
-Creative-mango serves as a feed-centric creative management solution tailored for ACi and ACe. 
-It comes equipped with automated capabilities for seamlessly uploading videos to YouTube.
+Creative automation serves as a feed-centric creative management solution tailored for ACi and ACe.
+It comes equipped with automated capabilities for seamlessly uploading videos to YouTube.<br/>
 
 With this tool, clients can conveniently manage their desired actions within a spreadsheet.
-The tool then takes charge, handling the process of pulling creatives and subsequently refreshing your App campaigns with the latest updates.
+The tool then takes charge, handling the process of pulling creatives and subsequently refreshing your App campaigns with the latest updates.<br/>
+<br/>
+
+The overall solution architect is as shown below.
+![solution architect](https://github.com/google-marketing-solutions/creative-mango/assets/66818527/57647a9b-d781-4418-b7c1-c10b784c0c16)
+
 
 
 **NOTE**: This library is _not_ compatible with Python versions less than Python 3.7.
-**NOTE**: Google Ads API version: v12
+
 
 
 ## Prerequisites
