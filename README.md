@@ -11,6 +11,17 @@ The overall solution architect is as shown below.
 ![solution architect](https://github.com/google-marketing-solutions/creative-mango/assets/66818527/57647a9b-d781-4418-b7c1-c10b784c0c16)
 
 
+## Business logics
+1. Easily set up scheduled promotions for your flighted creatives in the App Campaign.
+
+![flighted creatives](https://github.com/google-marketing-solutions/creative-mango/assets/66818527/5d191a86-a3e5-477b-b824-a3907fefc219)
+
+2. Automatically replace underperforming creatives with new ones once you reach the maximum creative limit.
+
+
+![underperforming creatives](https://github.com/google-marketing-solutions/creative-mango/assets/66818527/8bea9d97-7a1c-4b20-b91e-c365e1d29d87)
+
+
 
 **NOTE**: This library is _not_ compatible with Python versions less than Python 3.7.
 
