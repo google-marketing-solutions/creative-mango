@@ -1,6 +1,6 @@
 # App Campaign Creative Automation Solution 
 
-Creative automation solution serves as a feed-centric creative management solution tailored for App campaign.
+App Campaign Creative Automation Solution serves as a feed-centric creative management solution tailored for App campaign.
 It also facilitates effortless video uploads to YouTube.<br/>
 
 With this tool, clients can conveniently manage their desired creative actions within a spreadsheet.
