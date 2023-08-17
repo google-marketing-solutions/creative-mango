@@ -1,9 +1,9 @@
 # App Campaign Creative Automation Solution 
 
-Creative automation serves as a feed-centric creative management solution tailored for ACi and ACe.
-It comes equipped with automated capabilities for seamlessly uploading videos to YouTube.<br/>
+Creative automation solution serves as a feed-centric creative management solution tailored for App campaign.
+It also facilitates effortless video uploads to YouTube.<br/>
 
-With this tool, clients can conveniently manage their desired actions within a spreadsheet.
+With this tool, clients can conveniently manage their desired creative actions within a spreadsheet.
 The tool then takes charge, handling the process of pulling creatives and subsequently refreshing your App campaigns with the latest updates.<br/>
 <br/>
 
