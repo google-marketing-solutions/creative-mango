@@ -925,6 +925,8 @@ def format_uploading_sheet_value(uploading_sheet_rows):
   result_uploading_rows = []
   for index in range(len(uploading_sheet_rows)):
     uploading_row = uploading_sheet_rows[index]
+    if len(uploading_row) == 0:
+      continue
     if uploading_row[UploadColumnMap.ADGROUP_ALIAS]:
       # Formating the uploading rows so they all have same number of columns.
       while len(uploading_row) < _NUMBER_OF_UPLOADING_COLUMNS:
