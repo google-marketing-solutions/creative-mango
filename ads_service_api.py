@@ -36,7 +36,7 @@ class AdService():
       ads_account_file: Path to Google Ads API account file.
     """
     self._google_ads_client = googleads.client.GoogleAdsClient.load_from_storage(
-        ads_account_file, version='v12')
+        ads_account_file)
     self._cache_ad_group_ad = {}
     self.prev_image_asset_list = None
     self.prev_customer_id = None
