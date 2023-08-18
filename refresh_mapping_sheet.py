@@ -89,6 +89,8 @@ def get_all_child_customer_ids(ads_service, login_customer_id=None):
 
   for seed_customer_id in seed_customer_ids:
     child_accounts = get_child_accounts(ads_service, seed_customer_id)
+    if not child_accounts:
+      continue
     for child_account in child_accounts:
       if child_account not in all_child_customer_ids:
         all_child_customer_ids.append(child_account)
@@ -156,6 +158,7 @@ def get_child_accounts(ads_service, seed_customer_id):
     GoogleAdsException: Google Ads API error.
     Exception: Unknown error.
   """
+  child_accounts = None
   try:
     child_accounts = ads_service._get_all_child_accounts(seed_customer_id)
   except googleads.errors.GoogleAdsException as failures:
