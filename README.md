@@ -99,16 +99,11 @@ directory. If not, check out the code to a local directory.
         *   youtubeServiceEnable = True,
         *   youtubeSecret,
             *   use 'client_secret.json' path from step 3a.
-            *   OR use '_SECRETS_JSON' path from step 3b.
     *   [Optional] if you want the tool to automatically update mapping sheets up-to-date,
         *   refreshMappingSheetEnable = True,
     *   [Optional] if you want the specify Google Drive folder ids for uploading image/video assets,
         *   driveFolderIds = [REPLACE_DRIVE_FOLDER_IDS]
         *   Setting driveFolderIds can reduce time for searching files in the Google Drive.
-    *   [Optional] if you want the tool to download videos from your YouTube channel as input source to the tool,
-        *   youtubeWindow: 6
-        *   Set youtubeWindow with the number of months in the past the tool should retrieve videos for.
-        *   Configure the YouTube API by setting up youtubeServiceEnable and youtubeSecret respectively.
 
 6.  To run the tool in a set order at once
     (get asset file urls -> remove assets -> upload assets -> refresh mapping sheet)
