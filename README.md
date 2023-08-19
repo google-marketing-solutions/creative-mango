@@ -119,14 +119,7 @@ directory. If not, check out the code to a local directory.
 
 8.  About uploading YouTube video via YouTube API
 
-    *   Ask your Google support to help you increase the YouTube API quota.
-        Default is 6 videos per day.
+    *   You might want to raise YouTube API quota. Default is 6 videos per day.
     *   You will need to be add as YouTube `Channel managers` to upload videos.
-    *   You should see a pop window asking you to grant the access to your
-        YouTube channel. You will only need to grant the access once. After you
-        grant the access, you should find 'yt_token.json' generated
-        in same folder. Don't move 'yt_token.json' as it will be
-        used in 'youtube_api.py'. If you choose the wrong channel, you can
-        delete 'yt_token.json' and rerun step 6.
 
 **NOTE**: This is not an officially supported Google product.
