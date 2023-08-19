@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-spreadsheetIds: [REPLACE_SPREADSHEET_IDS] # Replace with an array of spreadsheet IDs. e.g.['ID1', 'ID2']
-serviceAccount: PATH_TO_SERVICE_JSON # Replace with the path to service account file.
-clientSecret: PATH_TO_CLIENT_SECRET_JSON # Replace the with path to Client Secret account for OAuth client ID flow.
-adsAccount: config/google-ads.yaml # Replace with the path to ad account yaml file (google-ads.yaml) if you plan to save it somewhere else.
+spreadsheetIds: ['REPLACE_SPREADSHEET_IDS'] # Replace with an array of spreadsheet IDs. e.g.['ID1', 'ID2']
+#driveFolderIds: ['REPLACE_DRIVE_FOLDER_IDS'] # Replace with google drive folder id if you want to specify drive directory
 youtubeServiceEnable: False # Enable YouTube Service by chaning the config to True.
-youtubeSecret: PATH_TO_YOUTUBE_SECRET_JSON # Replace with the path to youtube service json.
 #youtubeWindow: 6 # Number of months backdated from today, for which the tool will retrieve video URLs from the YT channel default 6 (months).
 refreshMappingSheetEnable: False # Enable refresing mapping sheet if you want the tool to automatically update mapping sheets up-to-date
-#driveFolderIds: [REPLACE_DRIVE_FOLDER_IDS] # Replace with google drive folder id if you want to specify drive directory
+
+
+# DO NOT EDIT BELOW
+adsAccount: config/google-ads.yaml # Replace with the path to ad account yaml file (google-ads.yaml) if you plan to save it somewhere else.
+serviceAccount: PATH_TO_SERVICE_JSON # DO NOT EDIT
+clientSecret: PATH_TO_CLIENT_SECRET_JSON # DO NOT EDIT
