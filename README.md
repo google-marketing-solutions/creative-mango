@@ -1,4 +1,4 @@
-# App Campaign Creative Automation Solution 
+# App Campaign Creative Automation Solution
 
 App Campaign Creative Automation Solution serves as a feed-centric creative management solution tailored for App campaign.
 It also facilitates effortless video uploads to YouTube.<br/>
@@ -49,56 +49,52 @@ directory. If not, check out the code to a local directory.
 
 2.  Make a copy of [Template sheet](https://docs.google.com/spreadsheets/d/1L-rC9kunww4Z8UVE_3pmDhbmJcuQkukFcYjQPSzByr8/copy)
 
-3.  Set up your credentials through [step 3a. OAuth Client ID credentials (Recommended)] or [step 3b. Service Account].
+3.  Set up your credentials.
 
-    3a. Authentication using OAuth2 Client ID credentials [Installed App Flow] (Recommended for new implementation.)
+    3a. Generate Client ID and Client Secret credentials
     *   Open [Cloud credentials](https://console.developers.google.com/apis/credentials)
     *   Create credentials -> Create 'OAuth client ID' -> Web Application
         *   If you haven’t configured consent screen, setup consent screen first.
         *   User Type: External / Publishing Status: In production
-        *   If you want to run the tool in testing mode, make sure to add "test user" and add following "scopes": 
+        *   If you want to run the tool in testing mode, make sure to add "test user" and add following "scopes":
             Google Ads API, Google Drive API, Google Sheets API, YouTube Data API v3
-    *   Add the follwing 'Authorized redirect URIs' : 'http://localhost:8008/' and 'http://localhost:8080/'
-    *   Download the json and save the json as 'client_secret.json'
-    *   Open config/setup.yaml file and update clientSecret to 'client_secret.json'
-    *   Generate access token:
+        *   Add the follwing 'Authorized redirect URIs' : 'http://localhost:8008/' and 'http://localhost:8080/' and 'https://developers.google.com/oauthplayground'
+        *   Copy 'client_id' and 'client_client_secret' from previous step into 'config/google-ads.yaml' and 'config/token.json' and 'config/yt_token.json'
+    3b. Generate refresh token:
+    *   Open [Oauth Playground](https://developers.google.com/oauthplayground)
+        * On the right panel, find the 'OAuth 2.0 configuration' button
+        * Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
+        * On the left panel, select the scopes of
+            * 'https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/adwords', 'https://www.googleapis.com/auth/drive'
+        * Click 'Authorize APIs' and select the correct account
+        * Click 'Exchange authorization code for tokens' and
+        * Copy the 'Refresh token' and paste it 'config/google-ads.yaml' and 'config/token.json'
+        * Copy the 'Access token' and paste it 'config/token.json'
+    3c. [Optional] Generate refresh token for YouTube:
+     *   Open [Oauth Playground](https://developers.google.com/oauthplayground)
+        * On the right panel, find the 'OAuth 2.0 configuration' button
+        * Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
+        * On the left panel, select the scopes of
+            * 'https://www.googleapis.com/auth/youtube' 'https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly'
+        * Click 'Authorize APIs' and select the correct account
+        * Click 'Exchange authorization code for tokens' and
+        * Copy the 'Refresh token' and paste it 'config/yt_token.json'
+        * Copy the 'Access token' and paste it 'config/yt_token.json'
+    3d. Grant access to sheet and drive:
         *   Grant the cloud account email with 'Viewer' access to all 'Google Drives' [Cloud account email is any 'Owner' role email in]
         *   Grant the cloud account email with 'Editor' access to the 'Sheet'  you just copied in step 2.
         *   Grant cloud account email with [standard access](https://support.google.com/google-ads/answer/6372672?hl=en) your AdWords account
             *   Cloud account email is any 'Owner' role email in [cloud project](https://console.developers.google.com/iam-admin)
-        *   Generate the access tokens for the application with the following command:
-
-            $ python3 auth.py
-
-        - The app will open a browser window.
-        - Login with the cloud account email and grant the app the required permissions.
-        - An access/refresh token is generated for future authentication of the app and stored in the token.json file in the same folder.
-        - Don't move 'token.json' as it will be used everytime the app is running.
-
 4.  In google-ads.yaml file update following fields:
 
     *   [developer_token](https://developers.google.com/google-ads/api/docs/first-call/dev-token)
-    *   client_id
-        *   Find client_id in 'client_secret' from step 3a or '_SECRETS_JSON' from step 3b.
-    *   client_secret
-        *   Find client_secret in 'client_secret' from step 3a or '_SECRETS_JSON' from step 3b.
-    *   [refresh_token]
-        *   For step 3a. OAuth2 Client ID credentials, Copy the refresh token generated in step 3a. which is stored in token.json
     *   [Optional] login_customer_id, only if you setup under [manager account](https://support.google.com/google-ads/answer/6139186)
 
 5.  Update configuration in the config/setup.yaml
 
     *   spreadsheetIds,
-    *   serviceAccount,
-        *   use '_SERVICE_JSON' path from step 3b. If you choose step 3a, do not change.
-    *   clientSecret,
-        *   use 'client_secret.json' path from step 3a. If you choose step 3b, do not change.
-    *   adsAccount,
-        *   use 'config/google-ads.yaml' in step 4.
     *   [Optional] to setup YouTube API to upload videos,
-        *   youtubeServiceEnable = True,
-        *   youtubeSecret,
-            *   use 'client_secret.json' path from step 3a.
+        *   youtubeServiceEnable = True
     *   [Optional] if you want the tool to automatically update mapping sheets up-to-date,
         *   refreshMappingSheetEnable = True,
     *   [Optional] if you want the specify Google Drive folder ids for uploading image/video assets,
