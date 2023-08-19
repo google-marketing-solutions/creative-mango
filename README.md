@@ -62,24 +62,24 @@ directory. If not, check out the code to a local directory.
         *   Copy 'client_id' and 'client_client_secret' from previous step into 'config/google-ads.yaml' and 'config/token.json' and 'config/yt_token.json'
     3b. Generate refresh token:
     *   Open [Oauth Playground](https://developers.google.com/oauthplayground)
-        * On the right panel, find the 'OAuth 2.0 configuration' button
-        * Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
-        * On the left panel, select the scopes of
+        *   On the right panel, find the 'OAuth 2.0 configuration' button
+        *   Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
+        *   On the left panel, select the scopes of
             * 'https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/adwords', 'https://www.googleapis.com/auth/drive'
-        * Click 'Authorize APIs' and select the correct account
-        * Click 'Exchange authorization code for tokens' and
-        * Copy the 'Refresh token' and paste it 'config/google-ads.yaml' and 'config/token.json'
-        * Copy the 'Access token' and paste it 'config/token.json'
+        *   Click 'Authorize APIs' and select the correct account
+        *   Click 'Exchange authorization code for tokens' and
+        *   Copy the 'Refresh token' and paste it 'config/google-ads.yaml' and 'config/token.json'
+        *   Copy the 'Access token' and paste it 'config/token.json'
     3c. [Optional] Generate refresh token for YouTube:
      *   Open [Oauth Playground](https://developers.google.com/oauthplayground)
-        * On the right panel, find the 'OAuth 2.0 configuration' button
-        * Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
-        * On the left panel, select the scopes of
-            * 'https://www.googleapis.com/auth/youtube' 'https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly'
-        * Click 'Authorize APIs' and select the correct account
-        * Click 'Exchange authorization code for tokens' and
-        * Copy the 'Refresh token' and paste it 'config/yt_token.json'
-        * Copy the 'Access token' and paste it 'config/yt_token.json'
+         *   On the right panel, find the 'OAuth 2.0 configuration' button
+         *   Tick 'Use your own OAuth credentials' box and then fill in 'client_id' and 'client_client_secret'
+         *   On the left panel, select the scopes of
+             *   https://www.googleapis.com/auth/youtube' 'https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly'
+         *   Click 'Authorize APIs' and select the correct account
+         *   Click 'Exchange authorization code for tokens' and
+         *   Copy the 'Refresh token' and paste it 'config/yt_token.json'
+         *   Copy the 'Access token' and paste it 'config/yt_token.json'
     3d. Grant access to sheet and drive:
         *   Grant the cloud account email with 'Viewer' access to all 'Google Drives' [Cloud account email is any 'Owner' role email in]
         *   Grant the cloud account email with 'Editor' access to the 'Sheet'  you just copied in step 2.
