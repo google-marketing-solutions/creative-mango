@@ -19,10 +19,12 @@ import random
 import time
 
 import auth
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaInMemoryUpload
 import httplib2
+
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
 # we are handling retry logic ourselves.
@@ -32,10 +34,17 @@ httplib2.RETRIES = 1
 MAX_RETRIES = 10
 
 # Always retry when these exceptions are raised.
-RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, httplib.NotConnected,
-                        httplib.IncompleteRead, httplib.ImproperConnectionState,
-                        httplib.CannotSendRequest, httplib.CannotSendHeader,
-                        httplib.ResponseNotReady, httplib.BadStatusLine)
+RETRIABLE_EXCEPTIONS = (
+    httplib2.HttpLib2Error,
+    IOError,
+    httplib.NotConnected,
+    httplib.IncompleteRead,
+    httplib.ImproperConnectionState,
+    httplib.CannotSendRequest,
+    httplib.CannotSendHeader,
+    httplib.ResponseNotReady,
+    httplib.BadStatusLine,
+)
 
 # Always retry when an apiclient.errors.HttpError with one of these status
 # codes is raised.
@@ -52,16 +61,16 @@ _YOUTUBE_OPTIONS = {
     'description': 'creative-mango tool upload',
     'category': '22',
     'keywords': '',
-    'privacyStatus': 'unlisted'
+    'privacyStatus': 'unlisted',
 }
 _YOUTUBE_SCOPES = [
     'https://www.googleapis.com/auth/youtube.readonly',
     'https://www.googleapis.com/auth/youtube.upload',
 ]
-_YOUTUBE_TOKEN_JSON = 'yt_token.json'
+_YOUTUBE_TOKEN_JSON = 'config/yt_token.json'
 
 
-class YTService():
+class YTService:
   """Provides YouTube API service."""
 
   def __init__(self, _YOUTUBE_SECRETS_JSON):
@@ -71,15 +80,13 @@ class YTService():
       _YOUTUBE_SECRETS_JSON: YouTube API Secrets in a json file.
     """
     # Obtain credentials for YT API
-    if _YOUTUBE_SECRETS_JSON != 'PATH_TO_YOUTUBE_SECRET_JSON':
-      credential = auth.get_credentials_from_file(
-          client_secret_file=_YOUTUBE_SECRETS_JSON, scopes=_YOUTUBE_SCOPES,
-          token=_YOUTUBE_TOKEN_JSON, port=8080)
+    credential = Credentials.from_authorized_user_file(
+        _YOUTUBE_TOKEN_JSON, _YOUTUBE_SCOPES
+    )
 
-      self._YOUTUBE_SERVICE = build(
-          YOUTUBE_API_SERVICE_NAME,
-          YOUTUBE_API_VERSION,
-          credentials=credential)
+    self._YOUTUBE_SERVICE = build(
+        YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credential
+    )
 
   def initialize_upload(self, buffer):
     """Initializes video upload.
@@ -102,15 +109,19 @@ class YTService():
             title=_YOUTUBE_OPTIONS.get('title'),
             description=_YOUTUBE_OPTIONS.get('description'),
             tags=tags,
-            categoryId=_YOUTUBE_OPTIONS.get('category')),
-        status=dict(privacyStatus=_YOUTUBE_OPTIONS.get('privacyStatus')))
+            categoryId=_YOUTUBE_OPTIONS.get('category'),
+        ),
+        status=dict(privacyStatus=_YOUTUBE_OPTIONS.get('privacyStatus')),
+    )
 
     # Call the API's videos.insert method to create and upload the video.
     insert_request = self._YOUTUBE_SERVICE.videos().insert(
         part=','.join(body.keys()),
         body=body,
         media_body=MediaInMemoryUpload(
-            buffer, mimetype='video/mp4', chunksize=-1, resumable=True))
+            buffer, mimetype='video/mp4', chunksize=-1, resumable=True
+        ),
+    )
 
     return self.resumable_upload(insert_request)
 
@@ -137,11 +148,14 @@ class YTService():
           else:
             raise ValueError(
                 'The upload failed with an unexpected response: {}'.format(
-                    response))
+                    response
+                )
+            )
       except HttpError as e:
         if e.resp.status in RETRIABLE_STATUS_CODES:
           error = 'A retriable HTTP error {} occurred:\n{}'.format(
-              e.resp.status, e.content)
+              e.resp.status, e.content
+          )
         else:
           raise
       except RETRIABLE_EXCEPTIONS as e:
@@ -154,8 +168,11 @@ class YTService():
 
         max_sleep = 2 * retry
         sleep_seconds = random.random() * max_sleep
-        print('YouTube sleeping {} seconds and then retrying...'.format(
-            sleep_seconds))
+        print(
+            'YouTube sleeping {} seconds and then retrying...'.format(
+                sleep_seconds
+            )
+        )
         time.sleep(sleep_seconds)
     return youtube_id
 
@@ -191,41 +208,41 @@ class YTService():
     # print('Upload status:')
     response = None
     list_request = self._YOUTUBE_SERVICE.videos().list(
-        part='processingDetails', id=','.join(youtube_id_list))
+        part='processingDetails', id=','.join(youtube_id_list)
+    )
     response = list_request.execute()
     result = True
     for stream in response.get('items', []):
       # print('{}: {}'.format(stream['id'],
-          # stream['processingDetails']['processingStatus']))
+      # stream['processingDetails']['processingStatus']))
       if stream['processingDetails']['processingStatus'] == 'processing':
         result = False
     return result
 
-  def get_youtube_urls(self, _YOUTUBE_URL, yt_ids_sheet
-                       , youtube_window):
+  def get_youtube_urls(self, _YOUTUBE_URL, yt_ids_sheet, youtube_window):
     """Retrieve YouTube Videos from YT Channel to use for trafficking.
 
     Args:
       _YOUTUBE_URL: Youtube base urls used to match the pattern.
       yt_ids_sheet: List of video ids that are already in the sheet.
       youtube_window: The lookback window configured to use for retrieving YT
-          videos.
+        videos.
 
     Returns:
       Array of arrays containing the new video titles and youtube video URLs.
     """
     youtube_files = []
-    youtube_start_date = datetime.date.fromtimestamp(time.time()
-                                                     - (youtube_window
-                                                        * 30.436875 * 24
-                                                        * 60 * 60))
+    youtube_start_date = datetime.date.fromtimestamp(
+        time.time() - (youtube_window * 30.436875 * 24 * 60 * 60)
+    )
 
     # Retrieve the contentDetails part of the channel resource for the
     # authenticated user's channel.
-    channels_response = self._YOUTUBE_SERVICE.channels().list(
-        mine=True,
-        part='contentDetails'
-    ).execute()
+    channels_response = (
+        self._YOUTUBE_SERVICE.channels()
+        .list(mine=True, part='contentDetails')
+        .execute()
+    )
 
     for channel in channels_response['items']:
       # From the API response, extract the playlist ID that identifies the list
@@ -234,9 +251,7 @@ class YTService():
 
     # Retrieve the list of videos uploaded to the authenticated user's channel.
     pls_request = self._YOUTUBE_SERVICE.playlistItems().list(
-        playlistId=uploads_pl_id,
-        part='snippet,contentDetails',
-        maxResults=5
+        playlistId=uploads_pl_id, part='snippet,contentDetails', maxResults=5
     )
 
     while pls_request:
@@ -247,14 +262,18 @@ class YTService():
         if pl_item['snippet']['resourceId']['videoId'] not in yt_ids_sheet:
           yt_ids_sheet.add(pl_item['contentDetails']['videoId'])
           published_date = datetime.date.fromisoformat(
-              pl_item['contentDetails']['videoPublishedAt'][0:10])
+              pl_item['contentDetails']['videoPublishedAt'][0:10]
+          )
           if published_date > youtube_start_date:
-            youtube_files.append(['', 'VIDEO', pl_item['snippet']['title'],
-                                  _YOUTUBE_URL +
-                                  pl_item['snippet']['resourceId']['videoId']
-                                  ])
+            youtube_files.append([
+                '',
+                'VIDEO',
+                pl_item['snippet']['title'],
+                _YOUTUBE_URL + pl_item['snippet']['resourceId']['videoId'],
+            ])
 
       pls_request = self._YOUTUBE_SERVICE.playlistItems().list_next(
-          pls_request, playlistitems_list_response)
+          pls_request, playlistitems_list_response
+      )
 
     return youtube_files
