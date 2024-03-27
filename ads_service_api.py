@@ -472,52 +472,57 @@ class AdService():
       ad_group_id: ad group id.
 
     Raises:
-      ValueError: If the ad group id can't match any ad id.
+      ValueError: If the ad group id can't match any ad id or Google Ads API returned errors.
       TypeError: Unknown type.
     """
-    if not asset_id:
-      raise ValueError('Unable to perform media action. Unknown error.')
+    try:
+        if not asset_id:
+            raise ValueError('Unable to perform media action. Unknown error.')
 
-    service = self._google_ads_client.get_service('AdService')
-    ad_group_ad = self._get_ad_group_ad(customer_id, ad_group_id)
+        service = self._google_ads_client.get_service('AdService')
+        ad_group_ad = self._get_ad_group_ad(customer_id, ad_group_id)
 
-    if not ad_group_ad:
-      raise ValueError(f'This {ad_group_id} ad_group does not have ad.'
-                       ' Kindly check if the ad group id is correct.')
+        if not ad_group_ad:
+            raise ValueError(f'This {ad_group_id} ad_group does not have ad.'
+                ' Kindly check if the ad group id is correct.')
 
-    (ad_group_ad_type, ad_group_ad_id) = ad_group_ad
+        (ad_group_ad_type, ad_group_ad_id) = ad_group_ad
 
-    resource_name = f'customers/{customer_id}/ads/{str(ad_group_ad_id)}'
+        resource_name = f'customers/{customer_id}/ads/{str(ad_group_ad_id)}'
 
-    new_list_of_asset = self._google_ads_client.get_type('AdOperation')
+        new_list_of_asset = self._google_ads_client.get_type('AdOperation')
 
-    asset_operation = self._get_asset_list_by_asset_type(
-        asset_type, ad_group_ad_type, new_list_of_asset)
+        asset_operation = self._get_asset_list_by_asset_type(
+            asset_type, ad_group_ad_type, new_list_of_asset)
 
-    ad_asset = self._create_ad_asset_by_id(asset_type, asset_id)
+        ad_asset = self._create_ad_asset_by_id(asset_type, asset_id)
 
-    self._insert_existing_media_asset(asset_operation, ad_group_ad_id,
-                                      ad_group_ad_type, asset_type, customer_id)
+        self._insert_existing_media_asset(asset_operation, ad_group_ad_id,
+                                        ad_group_ad_type, asset_type, customer_id)
 
-    prev_field_mask = copy.deepcopy(
-        protobuf_helpers.field_mask(None, new_list_of_asset.update._pb))
+        if add_or_remove == 'ADD':
+            self._append_asset_operation(asset_operation, ad_asset)
+        else:
+            self._remove_asset_operation(asset_operation, ad_asset)
 
-    if add_or_remove == 'ADD':
-      self._append_asset_operation(asset_operation, ad_asset)
-    else:
-      self._remove_asset_operation(asset_operation, ad_asset)
-
-    field_mask = None
-    # If final asset is empty, field mask will be empty and mutate operation will be skipped. So we need to use prev field mask in that case.
-    if not asset_operation:
-      field_mask = prev_field_mask
-    else:
-      field_mask = protobuf_helpers.field_mask(None,
+        field_mask = None
+        prev_field_mask = copy.deepcopy(
+            protobuf_helpers.field_mask(None, new_list_of_asset.update._pb))
+        # If final asset is empty, field mask will be empty and mutate operation will be skipped. So we need to use prev field mask in that case.
+        if not asset_operation:
+            field_mask = prev_field_mask
+        else:
+            field_mask = protobuf_helpers.field_mask(None,
                                                new_list_of_asset.update._pb)
 
-    new_list_of_asset.update.resource_name = resource_name
-    self._google_ads_client.copy_from(new_list_of_asset.update_mask, field_mask)
-    service.mutate_ads(customer_id=customer_id, operations=[new_list_of_asset])
+        new_list_of_asset.update.resource_name = resource_name
+        self._google_ads_client.copy_from(new_list_of_asset.update_mask, field_mask)   
+        service.mutate_ads(customer_id=customer_id, operations=[new_list_of_asset])
+    except googleads.errors.GoogleAdsException as failures:
+      error_message = ''
+      for error in failures.failure.errors:
+        error_message += error.message
+      raise ValueError(error_message)
 
   def _create_image_asset(self, image_name, image_buffer, customer_id):
     """Creates image assets with a given name from the Upload Sheet and data from image buffer.
@@ -818,27 +823,31 @@ class AdService():
     if ad_group_ad_type == self._google_ads_client.enums.AdTypeEnum.APP_AD:
       for row in response:
         if asset_type == 'HEADLINE':
-          for texts in row.ad_group_ad.ad.app_ad.headlines:
-            text_asset = self._google_ads_client.get_type('AdTextAsset')
-            text_asset.text = texts.text
-            asset_operation.append(text_asset)
+          if(row.ad_group_ad.ad.app_ad.headlines):
+            for texts in row.ad_group_ad.ad.app_ad.headlines:
+              text_asset = self._google_ads_client.get_type('AdTextAsset')
+              text_asset.text = texts.text
+              asset_operation.append(text_asset)
         else:
-          for texts in row.ad_group_ad.ad.app_ad.descriptions:
-            text_asset = self._google_ads_client.get_type('AdTextAsset')
-            text_asset.text = texts.text
-            asset_operation.append(text_asset)
+          if(row.ad_group_ad.ad.app_ad.description):
+            for texts in row.ad_group_ad.ad.app_ad.descriptions:
+              text_asset = self._google_ads_client.get_type('AdTextAsset')
+              text_asset.text = texts.text
+              asset_operation.append(text_asset)
     else:
       for row in response:
         if asset_type == 'HEADLINE':
-          for texts in row.ad_group_ad.ad.app_engagement_ad.headlines:
-            text_asset = self._google_ads_client.get_type('AdTextAsset')
-            text_asset.text = texts.text
-            asset_operation.append(text_asset)
+          if(row.ad_group_ad.ad.app_engagement_ad.headlines):
+            for texts in row.ad_group_ad.ad.app_engagement_ad.headlines:
+              text_asset = self._google_ads_client.get_type('AdTextAsset')
+              text_asset.text = texts.text
+              asset_operation.append(text_asset)
         else:
-          for texts in row.ad_group_ad.ad.app_engagement_ad.descriptions:
-            text_asset = self._google_ads_client.get_type('AdTextAsset')
-            text_asset.text = texts.text
-            asset_operation.append(text_asset)
+          if(row.ad_group_ad.ad.app_engagement_ad.descriptions):
+            for texts in row.ad_group_ad.ad.app_engagement_ad.descriptions:
+              text_asset = self._google_ads_client.get_type('AdTextAsset')
+              text_asset.text = texts.text
+              asset_operation.append(text_asset)
 
   def _insert_existing_media_asset(self, asset_operation, ad_group_ad_id,
                                    ad_group_ad_type, asset_type, customer_id):
@@ -847,27 +856,31 @@ class AdService():
     if ad_group_ad_type == self._google_ads_client.enums.AdTypeEnum.APP_AD:
       for row in response:
         if asset_type == 'IMAGE':
-          for media in row.ad_group_ad.ad.app_ad.images:
-            ad_asset = self._google_ads_client.get_type('AdImageAsset')
-            ad_asset.asset = media.asset
+          if(row.ad_group_ad.ad.app_ad.images):
+            for media in row.ad_group_ad.ad.app_ad.images:
+                ad_asset = self._google_ads_client.get_type('AdImageAsset')
+                ad_asset.asset = media.asset
             asset_operation.append(media)
         else:
-          for media in row.ad_group_ad.ad.app_ad.youtube_videos:
-            ad_asset = self._google_ads_client.get_type('AdVideoAsset')
-            ad_asset.asset = media.asset
-            asset_operation.append(ad_asset)
+            if(row.ad_group_ad.ad.app_ad.youtube_videos):
+                for media in row.ad_group_ad.ad.app_ad.youtube_videos:
+                    ad_asset = self._google_ads_client.get_type('AdVideoAsset')
+                    ad_asset.asset = media.asset
+                    asset_operation.append(ad_asset)
     else:
       for row in response:
         if asset_type == 'IMAGE':
-          for media in row.ad_group_ad.ad.app_engagement_ad.images:
-            ad_asset = self._google_ads_client.get_type('AdImageAsset')
-            ad_asset.asset = media.asset
-            asset_operation.append(media)
+            if(row.ad_group_ad.ad.app_engagement_ad.images):
+                for media in row.ad_group_ad.ad.app_engagement_ad.images:
+                    ad_asset = self._google_ads_client.get_type('AdImageAsset')
+                    ad_asset.asset = media.asset
+                    asset_operation.append(media)
         else:
-          for media in row.ad_group_ad.ad.app_engagement_ad.videos:
-            ad_asset = self._google_ads_client.get_type('AdVideoAsset')
-            ad_asset.asset = media.asset
-            asset_operation.append(ad_asset)
+            if(row.ad_group_ad.ad.app_engagement_ad.videos):
+                for media in row.ad_group_ad.ad.app_engagement_ad.videos:
+                    ad_asset = self._google_ads_client.get_type('AdVideoAsset')
+                    ad_asset.asset = media.asset
+                    asset_operation.append(ad_asset)
 
   def _get_text_asset_value_by_asset_id(self, customer_id, asset_id):
     """Gets text asset value by asset id.
