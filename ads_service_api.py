@@ -829,7 +829,7 @@ class AdService():
               text_asset.text = texts.text
               asset_operation.append(text_asset)
         else:
-          if(row.ad_group_ad.ad.app_ad.description):
+          if(row.ad_group_ad.ad.app_ad.descriptions):
             for texts in row.ad_group_ad.ad.app_ad.descriptions:
               text_asset = self._google_ads_client.get_type('AdTextAsset')
               text_asset.text = texts.text
