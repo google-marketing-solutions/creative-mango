@@ -326,7 +326,7 @@ def update_time_managed_sheet(sheets_service, update_errors,
     Managed Sheet.
   """
   try:
-    sheets_service.clear_sheet_range(f'Time Managed!J2:L')
+    sheets_service.clear_sheet_range(f'Time Managed!K2:L')
   except Exception as e:
     print(f'Unable to update Time Managed Sheet rows: {str(e)}')
 
@@ -606,59 +606,6 @@ def evaluate_asset_perf(asset_perf, metrics):
     return ''
 
 
-def get_update_checkbox(update_row, update_index, time_managed_sheet_id):
-  """Gets target cells to update checkbox in the Time Managed Sheet.
-
-  Args:
-    update_row: row to update checkbox.
-    update_index: row index of the target cell.
-    time_managed_sheet_id: Sheet id for the Time Managed Sheet.
-
-  Returns:
-    update_checkbox: cell information for updating checkbox.
-  """
-  if update_row[5] != '':
-    update_checkbox = {
-        'updateCells': {
-            'start': {
-                'sheetId': time_managed_sheet_id,
-                'rowIndex': update_index - 1,
-                'columnIndex': TimeManagedColumn.DELETE_BY_PERFORMANCE
-            },
-            'rows': [{
-                'values': [{
-                    'dataValidation': {
-                        'condition': {
-                            'type': 'BOOLEAN'
-                        }
-                    }
-                }]
-            }],
-            'fields': 'dataValidation'
-        }
-    }
-  else:
-    update_checkbox = {
-        'updateCells': {
-            'start': {
-                'sheetId': time_managed_sheet_id,
-                'rowIndex': update_index - 1,
-                'columnIndex': TimeManagedColumn.DELETE_BY_PERFORMANCE
-            },
-            'rows': [{
-                'values': [{
-                    'userEnteredValue': {
-                        'stringValue': update_row[5]
-                    },
-                    'dataValidation': None
-                }]
-            }],
-            'fields': 'userEnteredValue, dataValidation'
-        }
-    }
-  return update_checkbox
-
-
 def get_update_perf_note(update_row, update_index, time_managed_sheet_id):
   """Gets target cells to update performance note in the Time Managed Sheet.
 
@@ -745,10 +692,6 @@ def update_time_managed_sheet_perf_note(sheets_service, time_managed_sheet_id,
                                               time_managed_sheet_id)
       update_value_request_list.append(update_perf_note)
 
-      update_checkbox = get_update_checkbox(update_row, update_index,
-                                            time_managed_sheet_id)
-      update_checkbox_list.append(update_checkbox)
-
   if update_errors:
     for update_row in update_errors:
       update_index = update_row[0]
@@ -760,16 +703,6 @@ def update_time_managed_sheet_perf_note(sheets_service, time_managed_sheet_id,
     try:
       # Update Perf Note / Error Note
       sheets_service.batch_update_requests(update_value_request_list)
-
-    except Exception as e:
-      print(
-          f'Error while updating performance note in the Time Managed Sheet: {str(e)}'
-      )
-
-  if update_checkbox_list:
-    try:
-      # Update Delete by Performance column (insert checkbox)
-      sheets_service.batch_update_requests(update_checkbox_list)
 
     except Exception as e:
       print(
