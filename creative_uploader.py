@@ -67,8 +67,10 @@ _TEXT_ASSET_AUTO_MODIFY = False
 
 _USED_ADGROUP_COLUMN = 'Upload!H'
 _TIME_MANAGED_SHEET_RANGE = 'Time Managed!A2:I'
+_TIME_MANAGE_SHEET_NAME = 'Time Managed'
 _YOUTUBE_SHEET_RANGE = 'YT List!A2:Z'
 _YT_URL = 'https://www.youtube.com/watch?v='
+_DELETE_BY_PERFORMANCE_INDEX = 9
 
 youtube_dict = {}
 
@@ -91,6 +93,70 @@ class UploadColumnMap(enum.IntEnum):
   END_DATE = 6
   USED_ADGROUP_ID = 7
   ROW_INDEX = 8
+
+
+def _get_unchecked_checkbox(update_index, time_managed_sheet_id):
+  """Gets target cells to update checkbox in the Time Managed Sheet.
+
+  Args:
+    update_index: row index of the target cell.
+    time_managed_sheet_id: Sheet id for the Time Managed Sheet.
+
+  Returns:
+    update_checkbox: cell information for updating checkbox.
+  """
+  update_checkbox = {
+      'updateCells': {
+          'start': {
+              'sheetId': time_managed_sheet_id,
+              'rowIndex': update_index - 1,
+              'columnIndex': _DELETE_BY_PERFORMANCE_INDEX
+          },
+          'rows': [{
+              'values': [{
+                  'dataValidation': {
+                      'condition': {
+                          'type': 'BOOLEAN'
+                      }
+                  }
+              }]
+          }],
+          'fields': 'dataValidation'
+      }
+  }
+  return update_checkbox
+
+
+def _add_checkboxes_to_time_managed_sheet(sheets_service, row_index):
+  """Adds checkboxes to the time managed sheet in the given row.
+
+  Args:
+    sheets_service: Google Sheet APIs service.
+    row_index: The index of the row where the checkbox will be inserted.
+  """
+  try:
+    time_managed_sheet_id = sheets_service.get_sheet_id_by_name(
+        _TIME_MANAGE_SHEET_NAME)
+    checkbox = _get_unchecked_checkbox(row_index, time_managed_sheet_id)
+    sheets_service.batch_update_requests(checkbox)
+  except Exception as e:
+    print(
+      f'Error while adding checkboxes in Time Managed Sheet: {str(e)}'
+    )
+
+
+def get_index_from_range(range_string):
+  """Returns the row index from the end of the range string.
+
+  Args:
+    range_string: The range of the spreadsheet.
+  
+  Returns:
+    row_index: The row index from the end of the input range.
+  """
+  range_string_stripped = range_string.rstrip('0123456789')
+  row_index = range_string[len(range_string_stripped):]
+  return row_index
 
 
 def _write_upload_to_time_managed_sheet(sheets_service, uploading_row, asset_id,
@@ -126,8 +192,12 @@ def _write_upload_to_time_managed_sheet(sheets_service, uploading_row, asset_id,
       uploading_row[UploadColumnMap.END_DATE],
   ]
   try:
-    sheets_service.write_to_sheet(_TIME_MANAGED_SHEET_RANGE,
+    values = sheets_service.write_to_sheet(_TIME_MANAGED_SHEET_RANGE,
                                   [time_managed_row_contents])
+    if(values.get('updates').get('updatedRange')):
+      updated_range = values.get('updates').get('updatedRange')
+      row_index = get_index_from_range(updated_range)
+      _add_checkboxes_to_time_managed_sheet(sheets_service, int(row_index))
   except HttpError:
     print('Unable to write to time managed sheet. '
           'Verify whether the time managed sheet id/name is correct.')
@@ -163,7 +233,7 @@ def remove_asset_by_performance(ads_service, uploading_row, matched_campaign):
 
   Args:
     ads_service: Google Ads APIs service handler.
-    uploading_row: an array of string from uplading sheet.
+    uploading_row: an array of string from uploading sheet.
     matched_campaigns: matched campaigns to execute the action.
 
   Raises:
