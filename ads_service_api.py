@@ -652,8 +652,7 @@ class AdService():
       id_pair = (customer_id, ad_group_id)
 
       if id_pair not in self._cache_ad_group_ad:
-        raise ValueError(f'This {ad_group_id} ad_group does not have ad.'
-                         ' Kindly check if the ad group id is correct.')
+        continue
       ad_group_ad_id_list.append(str(self._cache_ad_group_ad[id_pair][1]))
 
     response = self._get_asset_by_ad_group_ad_id_list(customer_id,
