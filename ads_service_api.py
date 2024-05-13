@@ -502,8 +502,6 @@ class AdService():
 
         if add_or_remove == 'ADD':
             self._append_asset_operation(asset_operation, ad_asset)
-        else:
-            self._remove_asset_operation(asset_operation, ad_asset)
 
         field_mask = None
         prev_field_mask = copy.deepcopy(
@@ -514,6 +512,8 @@ class AdService():
         else:
             field_mask = protobuf_helpers.field_mask(None,
                                                new_list_of_asset.update._pb)
+        if add_or_remove == 'REMOVE':
+            self._remove_asset_operation(asset_operation, ad_asset)
 
         new_list_of_asset.update.resource_name = resource_name
         self._google_ads_client.copy_from(new_list_of_asset.update_mask, field_mask)   

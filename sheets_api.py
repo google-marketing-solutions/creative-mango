@@ -69,6 +69,7 @@ class SheetsService():
         range=field_range,
         valueInputOption='RAW',
         body=body).execute()
+    return values
 
   def update_sheet_columns(self, field_range, values):
     """Writes data into sheet.
