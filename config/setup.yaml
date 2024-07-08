@@ -17,6 +17,7 @@ spreadsheetIds: ['REPLACE_SPREADSHEET_IDS'] # Replace with an array of spreadshe
 youtubeServiceEnable: False # Enable YouTube Service by chaning the config to True.
 #youtubeWindow: 6 # Number of months backdated from today, for which the tool will retrieve video URLs from the YT channel default 6 (months).
 refreshMappingSheetEnable: False # Enable refresing mapping sheet if you want the tool to automatically update mapping sheets up-to-date
+youtubeSecret: ""
 
 
 # DO NOT EDIT BELOW
