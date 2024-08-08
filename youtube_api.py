@@ -271,6 +271,8 @@ class YTService:
                 pl_item['snippet']['title'],
                 _YOUTUBE_URL + pl_item['snippet']['resourceId']['videoId'],
             ])
+          else:
+            return youtube_files
 
       pls_request = self._YOUTUBE_SERVICE.playlistItems().list_next(
           pls_request, playlistitems_list_response
